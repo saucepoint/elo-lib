@@ -21,7 +21,8 @@ library Elo {
     /// @notice Calculates the change in ELO rating, after a given outcome
     /// @param ratingA the ELO rating of the player A
     /// @param ratingB the ELO rating of the player B
-    /// @param score the score of the player A, 1 = won, 0 = lost, 0.5 = draw
+    /// @param score the score of the player A, scaled by 100. 100 = win, 50 = draw, 0 = loss
+    /// @param kFactor the k-factor or development multiplier used to calculate the change in ELO rating. 20 is the typical value
     function ratingChange(uint256 ratingA, uint256 ratingB, uint256 score, uint256 kFactor)
         internal
         pure
@@ -33,16 +34,17 @@ library Elo {
 
         bool _negative = ratingB < ratingA;
         uint256 ratingDiff = _negative ? ratingA - ratingB : ratingB - ratingA;
-        
+
         // expected score = 1 / (1 + 10 ^ (ratingDiff / 400))
-        uint256 _powered = fp.rpow(10, (ratingDiff + 800) / 40, 1);
+        uint256 n = _negative ? 800 - ratingDiff : 800 + ratingDiff;
+        uint256 _powered = fp.rpow(10, n / 40, 1);
         uint256 powered = nthRoot(_powered, 10);
 
-        // change = kFactor * (score - expectedScore)
-        // therefore, distribute kFactor to both terms
-        uint256 kExpectedScore = _kFactor / (100 + powered);
-        uint256 kScore = kFactor * score;
+        // given `change = kFactor * (score - expectedScore)` we can distribute kFactor to both terms
+        uint256 kExpectedScore = _kFactor / (100 + powered); // scaled up by 100
+        uint256 kScore = kFactor * score; // input score is already scaled up by 100
 
+        // determines the sign of the change
         negative = kScore < kExpectedScore;
         change = negative ? kExpectedScore - kScore : kScore - kExpectedScore;
     }

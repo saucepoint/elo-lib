@@ -8,41 +8,10 @@ import {FixedPointMathLib as fp} from "solmate/utils/FixedPointMathLib.sol";
 contract EloTest is Test {
     function setUp() public {}
 
-    function testNthRoot1() public {
-        // 4th root of 81 is 3
-        uint256 value = Elo.nthRoot(81, 4);
-        assertEq(value, 3);
-    }
-
-    function testNthRootWad() public {
-        // sqrt of 4e36 is 2e18
-        uint256 value = Elo.nthRoot(4e36, 2);
-        assertEq(value, 2e18);
-    }
-
-    function testNthRootWad2() public {
-        // 10th root of 1e25 is 316
-        uint256 value = Elo.nthRoot(1e25, 10);
-        assertEq(value, 316);
-    }
-
-    function testNthRoot2() public {
-        // 9th root of 512000000000 is 20
-        uint256 value = Elo.nthRoot(512_000_000_000, 9);
-        assertEq(value, 20);
-    }
-
-    function testNthRoot3() public {
-        uint256 value = Elo.nthRoot(fp.rpow(10, 21, 1), 20);
-        assertEq(value, 11);
-    }
-
-    function testNthRoot4() public {
-        uint256 powered = fp.rpow(10, 20, 1);
-        assertEq(powered, 1e20);
-        uint256 value = Elo.nthRoot(powered, 10);
-        // 10th root of 1e20 is 100
-        assertEq(value, 100);
+    function testSixteenthRoot1() public {
+        // 16th root of 65536 is 2
+        uint256 value = Elo.sixteenthRoot(65536);
+        assertEq(value, 2);
     }
 
     // underdog (player1) wins
@@ -76,7 +45,7 @@ contract EloTest is Test {
         // player 1 (1300) wins against player 2 (1200)
         // with kfactor of 20, the elo change should be 7.2
         (uint256 change, bool negative) = Elo.ratingChange(1300, 1200, 100, 20);
-        assertEq(change, 720); // change of 7.20 ELO
+        assertEq(change, 718); // change of 7.20 ELO, but is imprecise due to rounding
         assertEq(negative, false);
     }
 
@@ -85,7 +54,7 @@ contract EloTest is Test {
         // player 1 (1300) loses against player 2 (1200)
         // with kfactor of 20, the elo change should be 12.8
         (uint256 change, bool negative) = Elo.ratingChange(1300, 1200, 0, 20);
-        assertEq(change, 1280); // change of 12.80 ELO
+        assertEq(change, 1282); // change of 12.80 ELO, but is imprecise due to rounding
         assertEq(negative, true);
     }
 

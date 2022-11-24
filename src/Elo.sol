@@ -10,7 +10,7 @@ library Elo {
         return fp.sqrt(fp.sqrt(fp.sqrt(fp.sqrt(x))));
     }
 
-    /// @notice Calculates the change in ELO rating, after a given outcome. 
+    /// @notice Calculates the change in ELO rating, after a given outcome.
     /// @param ratingA the ELO rating of the player A
     /// @param ratingB the ELO rating of the player B
     /// @param score the score of the player A, scaled by 100. 100 = win, 50 = draw, 0 = loss
@@ -22,9 +22,9 @@ library Elo {
         pure
         returns (uint256 change, bool negative)
     {
-        uint256 _kFactor;  // scaled up `kFactor` by 100
+        uint256 _kFactor; // scaled up `kFactor` by 100
         bool _negative = ratingB < ratingA;
-        uint256 ratingDiff;  // absolute value difference between `ratingA` and `ratingB`
+        uint256 ratingDiff; // absolute value difference between `ratingA` and `ratingB`
 
         unchecked {
             // scale up the inputs by a factor of 100
@@ -44,7 +44,7 @@ library Elo {
         // expected score = 1 / (1 + 10 ^ (ratingDiff / 400))
         // elo change = kFactor * (score - expectedScore)
 
-        uint256 n;  // numerator of the power, with scaling, (numerator of `ratingDiff / 400`)
+        uint256 n; // numerator of the power, with scaling, (numerator of `ratingDiff / 400`)
         uint256 _powered; // the value of 10 ^ numerator
         uint256 powered; // the value of 16th root of 10 ^ numerator (fully resolved 10 ^ (ratingDiff / 400))
         uint256 kExpectedScore; // the expected score with K factor distributed

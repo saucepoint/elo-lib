@@ -69,6 +69,7 @@ contract EloTest is Test {
         uint256 diff = playerA > playerB ? playerA - playerB : playerB - playerA;
         if (diff > 1125) return;
         if (playerA > playerB && diff > 800) return;
-        Elo.ratingChange(playerA, playerB, 100, 20);
+        (uint256 change,) = Elo.ratingChange(playerA, playerB, 100, 20);
+        assertEq(0 < change, true);
     }
 }

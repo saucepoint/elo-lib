@@ -15,7 +15,7 @@ forge install saucepoint/elo-lib
 import {Elo} from "elo-lib/Elo.sol";
 
 contract MyContract {
-    // maps 
+    // maps player to their ELO
     mapping(address => uint256) elos;
     
     function updateElo() external {

@@ -1,5 +1,5 @@
 # elo-lib
-Calculate changes in ELO after a result between *two* players. Enables storing ELO on-chain (and consequently allowing for trustless leaderboards & prize pools)
+Calculate ELO after a result between *two* players. Enables storing ELO on-chain (and consequently allows for trustless leaderboards & prize pools)
 
 Add to your project (requires [foundry](https://book.getfoundry.sh/)):
 
@@ -28,7 +28,7 @@ contract MyContract {
         // update the elos
         if (negative) {
             // add your own overflow checks
-            // beaware that change is 2 decimal places (1501 = 15.01 ELO change)
+            // be aware that change is 2 decimal places (1501 = 15.01 ELO change)
             elos[player1] -= change;
             elos[player2] += change;
         } else {

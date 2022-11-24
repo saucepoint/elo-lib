@@ -28,6 +28,8 @@ library Elo {
 
         bool _negative = ratingB < ratingA;
         uint256 ratingDiff = _negative ? ratingA - ratingB : ratingB - ratingA;
+        require(ratingDiff <= 1125, "Rating difference too large");
+        if (_negative) require(ratingDiff < 800, "Rating difference too large");
 
         // expected score = 1 / (1 + 10 ^ (ratingDiff / 400))
         uint256 offset = 400 * magnitude;

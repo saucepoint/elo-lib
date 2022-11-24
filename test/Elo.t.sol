@@ -14,6 +14,13 @@ contract EloTest is Test {
         assertEq(value, 2);
     }
 
+    function testSixteenthRootFuzz(uint256 x) public {
+        if (x < 65536) return;
+        uint256 value = Elo.sixteenthRoot(x);
+        assertEq(2 <= value, true);
+        assertEq(value**16 <= x, true);
+    }
+
     // underdog (player1) wins
     function testEloChangePositive() public {
         // player 1 (1200) wins against player 2 (1400)
@@ -58,5 +65,10 @@ contract EloTest is Test {
         assertEq(negative, true);
     }
 
-    // TODO: fuzz test?
+    function testEloChangeFuzz(uint256 playerA, uint256 playerB) public {
+        uint256 diff = playerA > playerB ? playerA - playerB : playerB - playerA;
+        if (diff > 1125) return;
+        if (playerA > playerB && diff > 800) return;
+        Elo.ratingChange(playerA, playerB, 100, 20);
+    }
 }

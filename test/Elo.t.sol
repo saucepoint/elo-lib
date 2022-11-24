@@ -18,7 +18,7 @@ contract EloTest is Test {
         if (x < 65536) return;
         uint256 value = Elo.sixteenthRoot(x);
         assertEq(2 <= value, true);
-        assertEq(value**16 <= x, true);
+        assertEq(value ** 16 <= x, true);
     }
 
     // underdog (player1) wins

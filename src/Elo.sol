@@ -22,27 +22,39 @@ library Elo {
     {
         // scale up the inputs by a factor of 100
         // since our elo math is scaled up by 100 (to avoid integer division)
-        uint256 magnitude = 2;
-        uint256 scaleFactor = 10**magnitude;
-        uint256 _kFactor = kFactor * (scaleFactor**2);
-
+        uint256 _kFactor;
         bool _negative = ratingB < ratingA;
-        uint256 ratingDiff = _negative ? ratingA - ratingB : ratingB - ratingA;
+        uint256 ratingDiff;
+
+        unchecked {
+            _kFactor = kFactor * 10_000;
+            ratingDiff = _negative ? ratingA - ratingB : ratingB - ratingA;
+        }
         require(ratingDiff <= 1125, "Rating difference too large");
         if (_negative) require(ratingDiff < 800, "Rating difference too large");
 
+        // -------------------------------------------------
         // expected score = 1 / (1 + 10 ^ (ratingDiff / 400))
-        uint256 offset = 400 * magnitude;
-        uint256 n = _negative ? offset - ratingDiff : offset + ratingDiff;
-        uint256 _powered = fp.rpow(10, n / 25, 1);
-        uint256 powered = sixteenthRoot(_powered);
 
-        // given `change = kFactor * (score - expectedScore)` we can distribute kFactor to both terms
-        uint256 kExpectedScore = _kFactor / (scaleFactor + powered); // scaled up by 100
-        uint256 kScore = kFactor * score; // input score is already scaled up by 100
+        uint256 n;
+        uint256 _powered;
+        uint256 powered;
+        uint256 kExpectedScore;
+        uint256 kScore;
 
-        // determines the sign of the change
-        negative = kScore < kExpectedScore;
-        change = negative ? kExpectedScore - kScore : kScore - kExpectedScore;
+        unchecked {
+            // apply offset of 800 to scale the result by 100
+            n = _negative ? 800 - ratingDiff : 800 + ratingDiff;
+            _powered = fp.rpow(10, n / 25, 1);
+            powered = sixteenthRoot(_powered);
+
+            // given `change = kFactor * (score - expectedScore)` we can distribute kFactor to both terms
+            kExpectedScore = _kFactor / (100 + powered); // scaled up by 100
+            kScore = kFactor * score; // input score is already scaled up by 100
+
+            // determines the sign of the change
+            negative = kScore < kExpectedScore;
+            change = negative ? kExpectedScore - kScore : kScore - kExpectedScore;
+        }
     }
 }

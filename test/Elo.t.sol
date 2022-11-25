@@ -24,7 +24,7 @@ contract EloTest is Test {
     }
 
     function testPow() public view {
-        gt.powwad(65536e18);
+        gt.powwad(65536);
     }
 
     function testSixteenthRootFuzz(uint256 x) public {

@@ -3,15 +3,28 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import {Elo} from "../src/Elo.sol";
+import {GasTest} from "../src/GasTest.sol";
 import {FixedPointMathLib as fp} from "solmate/utils/FixedPointMathLib.sol";
 
 contract EloTest is Test {
-    function setUp() public {}
+    GasTest gt;
+
+    function setUp() public {
+        gt = new GasTest();
+    }
 
     function testSixteenthRoot1() public {
         // 16th root of 65536 is 2
         uint256 value = Elo.sixteenthRoot(65536);
         assertEq(value, 2);
+    }
+
+    function testFunny() public view {
+        gt.meme(65536);
+    }
+
+    function testPow() public view {
+        gt.powwad(65536e18);
     }
 
     function testSixteenthRootFuzz(uint256 x) public {
